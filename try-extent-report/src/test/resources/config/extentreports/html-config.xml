@@ -25,13 +25,75 @@
 
         <!-- custom javascript -->
         <js>
-
             <![CDATA[
                 $(document).ready(function() {
                     //$('body').prepend('<h1> >>> Finally Worked !!! </h1>');
+                    let row1 = document.evaluate('//*[@id="charts-row"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+                    let tbl = {
+                        0: {
+                            'pass': ['passParent'], 'fail': ['failParent'],
+                            'other': ['fatalParent', 'errorParent', 'warningParent', 'skipParent'],
+                            'count': ['parentCount'],
+                            'skip': ['skipParent'], 'sother': ['fatalParent', 'errorParent', 'warningParent'],
+                            'show': {
+                                'Passed': 'pass', 'Failed': 'fail', 'Skipped': 'skip',
+                                'Others': 'sother', 'Total': 'count'
+                            }
+                        },
+                        1: {
+                            'pass': ['passChild'], 'fail': ['failChild'],
+                            'other': ['fatalChild', 'errorChild', 'warningChild', 'skipChild', 'infoChild'],
+                            'count': ['childCount'],
+                            'skip': ['skipChild'], 'sother': ['fatalChild', 'errorChild', 'warningChild', 'infoChild'],
+                            'show': {
+                                'Passed': 'pass', 'Failed': 'fail', 'Skipped': 'skip',
+                                'Others': 'sother', 'Total': 'count'
+                            }
+                        },
+                        2: {
+                            'pass': ['passGrandChild'], 'fail': ['failGrandChild'],
+                            'other': ['fatalGrandChild', 'errorGrandChild', 'warningGrandChild', 'skipGrandChild', 'infoGrandChild'],
+                            'count': ['grandChildCount'],
+                            'skip': ['skipGrandChild'], 'sother': ['fatalGrandChild', 'errorGrandChild', 'warningGrandChild', 'infoGrandChild'],
+                            'show': {
+                                'Passed': 'pass', 'Failed': 'fail', 'Skipped': 'skip',
+                                'Others': 'sother', 'Total': 'count'
+                            }
+                        }
+                    };
+                    let divs = {
+                        0: $('<div>'), 1: $('<div>'), 2: $('<div>'), 'length': 3
+                    }
+                    for (let i = 0; i < divs.length; i++) {
+                        divs[i].addClass('block text-small');
+                        // create a table here with only what mentioned in show key
+                        let innerHTML = '<table>\n\t<tr>\n';
+                        for (let key in tbl[i]['show']) {
+                            if (tbl[i]['show'].hasOwnProperty(key)) { // This is to ensure that the key you get is an actual property of an object, not a property from the prototype
+                                innerHTML += '\t\t<td>' + key + '</td>\n';
+                            }
+                        }
+                        innerHTML += '\t</tr>\n\t<tr>\n';
+                        for (let key in tbl[i]['show']) {
+                            if (tbl[i]['show'].hasOwnProperty(key)) {
+                                let val = 0;
+                                for (let j = 0; j < tbl[i][tbl[i]['show'][key]].length; j++) {
+                                    val += statusGroup[tbl[i][tbl[i]['show'][key]][j]];
+                                }
+                                innerHTML += '\t\t<th>' + val + '</th>\n';
+                            }
+                        }
+                        innerHTML += '\t</tr>\n</table>';
+                        divs[i].html(innerHTML);
+                    };
+                    for (let i = 0; i < row1.children.length; i++) {
+                        coli = row1.children[i].children[0];
+                        coli.children[3].remove();
+                        coli.children[2].remove();
+                        coli.appendChild(divs[i][0]);
+                    }
                 });
             ]]>
-
         </js>
 
         <!-- custom styles -->
